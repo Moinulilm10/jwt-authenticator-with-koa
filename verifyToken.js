@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+const JWT_SECRET_KEY = "jsonwebtokensecretkey";
 const verifyToken = (ctx, next) => {
   try {
     const token = ctx.headers.token;
@@ -8,7 +8,7 @@ const verifyToken = (ctx, next) => {
       ctx.body = { error: "No token" };
       return;
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const decoded = jwt.verify(token, JWT_SECRET_KEY);
     const currentTimestamp = Date.now() / 1000;
     if (decoded.exp && currentTimestamp > decoded.exp) {
       ctx.throw(401, " token has expired");

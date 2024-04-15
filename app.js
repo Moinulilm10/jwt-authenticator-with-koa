@@ -10,8 +10,7 @@ const PORT = 8080;
 const app = new Koa();
 const router = new Router();
 
-app.use(bodyParser());
-app.use(router.routes());
+const JWT_SECRET_KEY = "jsonwebtokensecretkey";
 
 router.post("/signin", async (ctx) => {
   const { aud, userId } = ctx.request.body;
@@ -20,8 +19,8 @@ router.post("/signin", async (ctx) => {
     ctx.body = { error: "Aud or useID not given" };
     return;
   } else {
-    const token = jwt.sign({ aud, userId }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1m",
+    const token = jwt.sign({ aud, userId }, JWT_SECRET_KEY, {
+      expiresIn: "1hr",
     });
     ctx.body = { token: token };
   }
@@ -33,9 +32,12 @@ router.get("/login", verifyToken, async (ctx) => {
   };
 });
 
-app.use(async (ctx) => {
-  ctx.body = "Hello Koa";
-});
+// app.use(async (ctx) => {
+//   ctx.body = "Hello Koa";
+// });
+
+app.use(bodyParser());
+app.use(router.routes());
 
 app.listen(PORT, () => {
   console.log(`server is running at ${PORT}`);
